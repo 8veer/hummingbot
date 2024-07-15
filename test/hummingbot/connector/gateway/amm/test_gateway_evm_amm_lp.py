@@ -68,7 +68,7 @@ class GatewayEVMAMMLPConnectorUnitTest(unittest.TestCase):
             )
         )
         cls._patch_stack.enter_context(cls._clock)
-        GatewayHttpClient.get_instance(client_config_map=cls._client_config_map).base_url = "https://localhost:5000"
+        GatewayHttpClient.get_instance(client_config_map=cls._client_config_map).base_url = "https://localhost:8080"
         ev_loop.run_until_complete(cls.wait_til_ready())
 
     @classmethod

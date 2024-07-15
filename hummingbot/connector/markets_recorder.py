@@ -46,8 +46,8 @@ from hummingbot.model.range_position_collected_fees import RangePositionCollecte
 from hummingbot.model.range_position_update import RangePositionUpdate
 from hummingbot.model.sql_connection_manager import SQLConnectionManager
 from hummingbot.model.trade_fill import TradeFill
-from hummingbot.smart_components.controllers.controller_base import ControllerConfigBase
-from hummingbot.smart_components.models.executors_info import ExecutorInfo
+from hummingbot.strategy_v2.controllers.controller_base import ControllerConfigBase
+from hummingbot.strategy_v2.models.executors_info import ExecutorInfo
 
 
 class MarketsRecorder:
@@ -154,11 +154,12 @@ class MarketsRecorder:
                                             "bid": list(order_book.bid_entries())[:depth],
                                             "ask": list(order_book.ask_entries())[:depth]}
                                     )
-                                    session.add(market_data)
+                                    self.save_session(session, market_data)
             except asyncio.CancelledError:
                 raise
             except Exception as e:
-                self.logger().error("Unexpected error while recording market data.", e)
+                pass
+                # self.logger().error("Unexpected error while recording market data.", e)
             finally:
                 await self._sleep(self._market_data_collection_config.market_data_collection_interval)
 
@@ -193,6 +194,7 @@ class MarketsRecorder:
             self._market_data_collection_task.cancel()
 
     def store_or_update_executor(self, executor):
+        return
         with self._sql_manager.get_new_session() as session:
             existing_executor = session.query(Executors).filter(Executors.id == executor.config.id).one_or_none()
 
@@ -208,6 +210,7 @@ class MarketsRecorder:
             session.commit()
 
     def store_controller_config(self, controller_config: ControllerConfigBase):
+        return
         with self._sql_manager.get_new_session() as session:
             config = json.loads(controller_config.json())
             base_columns = ["id", "timestamp", "type"]
@@ -219,11 +222,13 @@ class MarketsRecorder:
             session.commit()
 
     def get_executors_by_ids(self, executor_ids: List[str]):
+        return []
         with self._sql_manager.get_new_session() as session:
             executors = session.query(Executors).filter(Executors.id.in_(executor_ids)).all()
             return executors
 
     def get_executors_by_controller(self, controller_id: str = None) -> List[ExecutorInfo]:
+        return []
         with self._sql_manager.get_new_session() as session:
             executors = session.query(Executors).filter(Executors.controller_id == controller_id).all()
             return [executor.to_executor_info() for executor in executors]
@@ -231,6 +236,7 @@ class MarketsRecorder:
     def get_orders_for_config_and_market(self, config_file_path: str, market: ConnectorBase,
                                          with_exchange_order_id_present: Optional[bool] = False,
                                          number_of_rows: Optional[int] = None) -> List[Order]:
+        return []
         with self._sql_manager.get_new_session() as session:
             filters = [Order.config_file_path == config_file_path,
                        Order.market == market.display_name]
@@ -246,6 +252,7 @@ class MarketsRecorder:
                 return query.limit(number_of_rows).all()
 
     def get_trades_for_config(self, config_file_path: str, number_of_rows: Optional[int] = None) -> List[TradeFill]:
+        return []
         with self._sql_manager.get_new_session() as session:
             query: Query = (session
                             .query(TradeFill)
@@ -255,6 +262,14 @@ class MarketsRecorder:
                 return query.all()
             else:
                 return query.limit(number_of_rows).all()
+
+    def save_session(self, session: Session,
+                     record: Union[MarketState, Order, OrderStatus, TradeFill, FundingPayment,
+                                   RangePositionUpdate, RangePositionCollectedFees]):
+        try:
+            session.add(record)
+        except Exception as e:
+            self.logger().error(e)
 
     def save_market_states(self, config_file_path: str, market: ConnectorBase, session: Session):
         market_states: Optional[MarketState] = self.get_market_states(config_file_path, market, session=session)
@@ -268,9 +283,10 @@ class MarketsRecorder:
                                         market=market.display_name,
                                         timestamp=timestamp,
                                         saved_state=market.tracking_states)
-            session.add(market_states)
+            self.save_session(session, market_states)
 
     def restore_market_states(self, config_file_path: str, market: ConnectorBase):
+        return
         with self._sql_manager.get_new_session() as session:
             market_states: Optional[MarketState] = self.get_market_states(config_file_path, market, session=session)
 
@@ -281,6 +297,7 @@ class MarketsRecorder:
                           config_file_path: str,
                           market: ConnectorBase,
                           session: Session) -> Optional[MarketState]:
+        return
         query: Query = (session
                         .query(MarketState)
                         .filter(MarketState.config_file_path == config_file_path,
@@ -296,7 +313,8 @@ class MarketsRecorder:
             self._ev_loop.call_soon_threadsafe(self._did_create_order, event_tag, market, evt)
             return
 
-        base_asset, quote_asset = evt.trading_pair.split("-")
+        base_asset = evt.trading_pair
+        quote_asset = ""
         timestamp = int(evt.creation_timestamp * 1e3)
         event_type: MarketEvent = self.market_event_tag_map[event_tag]
 
@@ -321,8 +339,8 @@ class MarketsRecorder:
                 order_status: OrderStatus = OrderStatus(order=order_record,
                                                         timestamp=timestamp,
                                                         status=event_type.name)
-                session.add(order_record)
-                session.add(order_status)
+                self.save_session(session, order_record)
+                self.save_session(session, order_status)
                 market.add_exchange_order_ids_from_market_recorder({evt.exchange_order_id: evt.order_id})
                 self.save_market_states(self._config_file_path, market, session=session)
 
@@ -334,7 +352,8 @@ class MarketsRecorder:
             self._ev_loop.call_soon_threadsafe(self._did_fill_order, event_tag, market, evt)
             return
 
-        base_asset, quote_asset = evt.trading_pair.split("-")
+        base_asset = evt.trading_pair
+        quote_asset = ""
         timestamp: int = int(evt.timestamp * 1e3) if evt.timestamp is not None else self.db_timestamp
         event_type: MarketEvent = self.market_event_tag_map[event_tag]
         order_id: str = evt.order_id
@@ -382,8 +401,8 @@ class MarketsRecorder:
                     exchange_trade_id=evt.exchange_trade_id,
                     position=evt.position if evt.position else PositionAction.NIL.value,
                 )
-                session.add(order_status)
-                session.add(trade_fill_record)
+                self.save_session(session, order_status)
+                self.save_session(session, trade_fill_record)
                 self.save_market_states(self._config_file_path, market, session=session)
 
                 market.add_trade_fills_from_market_recorder({TradeFillOrderDetails(trade_fill_record.market,
@@ -413,7 +432,7 @@ class MarketsRecorder:
                                                                             rate=evt.funding_rate,
                                                                             symbol=evt.trading_pair,
                                                                             amount=float(evt.amount))
-                    session.add(funding_payment_record)
+                    self.save_session(session, funding_payment_record)
 
     @staticmethod
     def _csv_matches_header(file_path: str, header: tuple) -> bool:
@@ -469,7 +488,7 @@ class MarketsRecorder:
                     order_status: OrderStatus = OrderStatus(order_id=order_id,
                                                             timestamp=timestamp,
                                                             status=event_type.name)
-                    session.add(order_status)
+                    self.save_session(session, order_status)
                     self.save_market_states(self._config_file_path, market, session=session)
 
     def _did_cancel_order(self,
@@ -513,7 +532,7 @@ class MarketsRecorder:
                                                                      tx_hash=evt.exchange_order_id,
                                                                      token_id=evt.token_id,
                                                                      trade_fee=evt.trade_fee.to_json())
-                session.add(rp_update)
+                self.save_session(session, rp_update)
                 self.save_market_states(self._config_file_path, connector, session=session)
 
     def _did_close_position(self,
@@ -533,7 +552,7 @@ class MarketsRecorder:
                                                                                  token_1=evt.token_1,
                                                                                  claimed_fee_0=Decimal(evt.claimed_fee_0),
                                                                                  claimed_fee_1=Decimal(evt.claimed_fee_1))
-                session.add(rp_fees)
+                self.save_session(session, rp_fees)
                 self.save_market_states(self._config_file_path, connector, session=session)
 
     @staticmethod

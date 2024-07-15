@@ -153,11 +153,11 @@ class InFlightOrder:
 
     @property
     def base_asset(self):
-        return self.trading_pair.split("-")[0]
+        return self.trading_pair
 
     @property
     def quote_asset(self):
-        return self.trading_pair.split("-")[1]
+        return ""
 
     @property
     def is_pending_create(self) -> bool:
@@ -179,18 +179,18 @@ class InFlightOrder:
     def is_done(self) -> bool:
         return (
             self.current_state in {OrderState.CANCELED, OrderState.FILLED, OrderState.FAILED}
-            or math.isclose(self.executed_amount_base, self.amount)
-            or self.executed_amount_base >= self.amount
+            # or math.isclose(self.executed_amount_base, self.amount)
+            # or self.executed_amount_base >= self.amount
         )
 
     @property
     def is_filled(self) -> bool:
         return (
             self.current_state == OrderState.FILLED
-            or (self.amount != s_decimal_0
-                and (math.isclose(self.executed_amount_base, self.amount)
-                     or self.executed_amount_base >= self.amount)
-                )
+            # or (self.amount != s_decimal_0
+            #     and (math.isclose(self.executed_amount_base, self.amount)
+            #          or self.executed_amount_base >= self.amount)
+            #     )
         )
 
     @property
@@ -302,14 +302,14 @@ class InFlightOrder:
         :return: the cumulative fee paid for all partial fills in the specified token
         """
         total_fee_in_token = Decimal("0")
-        for trade_update in self.order_fills.values():
-            total_fee_in_token += trade_update.fee.fee_amount_in_token(
-                trading_pair=self.trading_pair,
-                price=trade_update.fill_price,
-                order_amount=trade_update.fill_base_amount,
-                token=token,
-                exchange=exchange
-            )
+        # for trade_update in self.order_fills.values():
+        #     total_fee_in_token += trade_update.fee.fee_amount_in_token(
+        #         trading_pair=self.trading_pair,
+        #         price=trade_update.fill_price,
+        #         order_amount=trade_update.fill_base_amount,
+        #         token=token,
+        #         exchange=exchange
+        #     )
         return total_fee_in_token
 
     def update_with_order_update(self, order_update: OrderUpdate) -> bool:

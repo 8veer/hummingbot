@@ -656,7 +656,7 @@ async def load_strategy_config_map_from_file(yml_path: Path) -> Union[ClientConf
         config_data = read_yml_file(yml_path)
         hb_config = config_cls.construct()
         config_map = ClientConfigAdapter(hb_config)
-        _load_yml_data_into_map(config_data, config_map)
+        load_yml_data_into_map(config_data, config_map)
     return config_map
 
 
@@ -665,7 +665,7 @@ def load_connector_config_map_from_file(yml_path: Path) -> ClientConfigAdapter:
     connector_name = connector_name_from_file(yml_path)
     hb_config = get_connector_hb_config(connector_name)
     config_map = ClientConfigAdapter(hb_config)
-    _load_yml_data_into_map(config_data, config_map)
+    load_yml_data_into_map(config_data, config_map)
     return config_map
 
 
@@ -677,7 +677,7 @@ def load_client_config_map_from_file() -> ClientConfigAdapter:
         config_data = {}
     client_config = ClientConfigMap()
     config_map = ClientConfigAdapter(client_config)
-    config_validation_errors = _load_yml_data_into_map(config_data, config_map)
+    config_validation_errors = load_yml_data_into_map(config_data, config_map)
 
     if len(config_validation_errors) > 0:
         all_errors = "\n".join(config_validation_errors)
@@ -695,7 +695,7 @@ def load_ssl_config_map_from_file() -> ClientConfigAdapter:
         config_data = {}
     ssl_config = SSLConfigMap()
     config_map = ClientConfigAdapter(ssl_config)
-    config_validation_errors = _load_yml_data_into_map(config_data, config_map)
+    config_validation_errors = load_yml_data_into_map(config_data, config_map)
 
     if len(config_validation_errors) > 0:
         all_errors = "\n".join(config_validation_errors)
@@ -742,7 +742,7 @@ def list_connector_configs() -> List[Path]:
     return connector_configs
 
 
-def _load_yml_data_into_map(yml_data: Dict[str, Any], cm: ClientConfigAdapter) -> List[str]:
+def load_yml_data_into_map(yml_data: Dict[str, Any], cm: ClientConfigAdapter) -> List[str]:
     for key in cm.keys():
         if key in yml_data:
             cm.setattr_no_validation(key, yml_data[key])

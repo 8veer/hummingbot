@@ -13,6 +13,7 @@ class RESTConnection:
             params=request.params,
             data=request.data,
             headers=request.headers,
+            verify_ssl=False
         )
 
         resp = await self._build_resp(aiohttp_resp)

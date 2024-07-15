@@ -83,6 +83,11 @@ coverage.xml
 *.key
 *.crt
 *.log
+*.md
+*.idea
+*.csv
+__init__.py
+*.txt
 
 # Debug console
 .debug_console_ssh_host_key
@@ -92,3 +97,7 @@ coverage.xml
 # External SDK files
 /**/.chain_cookie
 /**/.injective_cookie
+*.Identifier
+*.yml
+/hummingbot/templates
+*.yaml

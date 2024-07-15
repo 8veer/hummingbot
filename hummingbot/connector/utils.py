@@ -25,12 +25,13 @@ def build_api_factory(throttler: AsyncThrottlerBase) -> WebAssistantsFactory:
 
 
 def split_hb_trading_pair(trading_pair: str) -> Tuple[str, str]:
-    base, quote = trading_pair.split("-")
+    base = trading_pair
+    quote = trading_pair
     return base, quote
 
 
 def combine_to_hb_trading_pair(base: str, quote: str) -> str:
-    trading_pair = f"{base}-{quote}"
+    trading_pair = f"{base}"
     return trading_pair
 
 
@@ -63,15 +64,15 @@ def get_new_client_order_id(
     side = "B" if is_buy else "S"
     symbols = split_hb_trading_pair(trading_pair)
     base = symbols[0].upper()
-    quote = symbols[1].upper()
+    # quote = symbols[1].upper()
     base_str = f"{base[0]}{base[-1]}"
-    quote_str = f"{quote[0]}{quote[-1]}"
+    # quote_str = f"{quote[0]}{quote[-1]}"
     client_instance_id = _bot_instance_id()
     ts_hex = hex(get_tracking_nonce())[2:]
-    client_order_id = f"{hbot_order_id_prefix}{side}{base_str}{quote_str}{ts_hex}{client_instance_id}"
+    client_order_id = f"{hbot_order_id_prefix}{side}{base_str}{ts_hex}{client_instance_id}"
 
     if max_id_len is not None:
-        id_prefix = f"{hbot_order_id_prefix}{side}{base_str}{quote_str}"
+        id_prefix = f"{hbot_order_id_prefix}{side}{base_str}"
         suffix_max_length = max_id_len - len(id_prefix)
         if suffix_max_length < len(ts_hex):
             id_suffix = md5(f"{ts_hex}{client_instance_id}".encode()).hexdigest()

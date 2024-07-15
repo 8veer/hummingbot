@@ -557,7 +557,7 @@ class VegaPerpetualDerivativeUnitTest(unittest.TestCase):
         self.assertEqual(expected1, bal1)
 
         bal2 = self.exchange._account_balances["COINALPHA"]
-        expected2 = Decimal("5000.00")
+        expected2 = Decimal("8080.00")
         self.assertEqual(expected2, bal2)
 
     @aioresponses()

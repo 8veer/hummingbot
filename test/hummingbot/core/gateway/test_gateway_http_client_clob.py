@@ -37,7 +37,7 @@ class GatewayHttpClientUnitTest(unittest.TestCase):
                 return_value=ClientSession(),
             )
         )
-        GatewayHttpClient.get_instance().base_url = "https://localhost:5000"
+        GatewayHttpClient.get_instance().base_url = "https://local:8080"
 
     @classmethod
     def tearDownClass(cls) -> None:

@@ -80,7 +80,8 @@ async def start_trade_monitor(trade_monitor):
                                 return_pcts.append(perf.return_pct)
                                 pnls.append(perf.total_pnl)
                             avg_return = sum(return_pcts) / len(return_pcts) if len(return_pcts) > 0 else s_decimal_0
-                            quote_assets = set(t.symbol.split("-")[1] for t in trades)
+                            # quote_assets = set(t.symbol.split("-")[1] for t in trades)
+                            quote_assets = set()
                             if len(quote_assets) == 1:
                                 total_pnls = f"{PerformanceMetrics.smart_round(sum(pnls))} {list(quote_assets)[0]}"
                             else:

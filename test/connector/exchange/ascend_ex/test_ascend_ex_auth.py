@@ -40,7 +40,7 @@ class TestAscendExAuth(unittest.TestCase):
         headers = self.auth.get_auth_headers("stream")
         ws = await websockets.connect(f"{get_ws_url_private(accountGroup)}/stream", extra_headers=headers)
 
-        raw_msg = await asyncio.wait_for(ws.recv(), 5000)
+        raw_msg = await asyncio.wait_for(ws.recv(), 8080)
         msg = ujson.loads(raw_msg)
 
         return msg

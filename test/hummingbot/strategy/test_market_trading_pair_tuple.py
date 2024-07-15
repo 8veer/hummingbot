@@ -37,7 +37,7 @@ class MarketTradingPairTupleUnitTest(unittest.TestCase):
     trading_pair: str = "COINALPHA-HBOT"
     base_asset, quote_asset = trading_pair.split("-")
     base_balance: int = 500
-    quote_balance: int = 5000
+    quote_balance: int = 8080
     initial_mid_price: int = 100
     clock_tick_size = 10
 

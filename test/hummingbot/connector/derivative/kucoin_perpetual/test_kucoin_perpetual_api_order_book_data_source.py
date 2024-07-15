@@ -95,7 +95,7 @@ class KucoinPerpetualAPIOrderBookDataSourceTests(TestCase):
                 "symbol": "XBTUSDM",
                 "sequence": 100,
                 "asks": [
-                    ["5000.0", 1000],
+                    ["8080.0", 1000],
                     ["6000.0", 1983]
                 ],
                 "bids": [
@@ -418,7 +418,7 @@ class KucoinPerpetualAPIOrderBookDataSourceTests(TestCase):
             "type": "message",
             "data": {
                 "sequence": 18,
-                "change": "5000.0,sell,83",
+                "change": "8080.0,sell,83",
                 "timestamp": 1551770400000,
             }
         }
@@ -443,7 +443,7 @@ class KucoinPerpetualAPIOrderBookDataSourceTests(TestCase):
         asks = msg.asks
         self.assertEqual(0, len(bids))
         self.assertEqual(1, len(asks))
-        self.assertEqual(5000.0, asks[0].price)
+        self.assertEqual(8080.0, asks[0].price)
         self.assertEqual(83 * 0.000001, asks[0].amount)
         self.assertEqual(expected_update_id, asks[0].update_id)
 

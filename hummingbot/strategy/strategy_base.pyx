@@ -501,27 +501,32 @@ cdef class StrategyBase(TimeIterator):
                                  order_type=OrderType.MARKET,
                                  price=s_decimal_nan,
                                  expiration_seconds=NaN,
-                                 position_action=PositionAction.OPEN):
+                                 position_action=PositionAction.OPEN,
+                                 con_id=None, argument=None):
         return self.c_buy_with_specific_market(market_trading_pair_tuple, amount,
                                                order_type,
                                                price,
                                                expiration_seconds,
-                                               position_action)
+                                               position_action,
+                                               con_id, argument)
 
     cdef str c_buy_with_specific_market(self, object market_trading_pair_tuple, object amount,
                                         object order_type=OrderType.MARKET,
                                         object price=s_decimal_nan,
                                         double expiration_seconds=NaN,
-                                        position_action=PositionAction.OPEN):
+                                        position_action=PositionAction.OPEN,
+                                        object con_id=None, object argument=None):
         if self._sb_delegate_lock:
             raise RuntimeError("Delegates are not allowed to execute orders directly.")
 
         if not (isinstance(amount, Decimal) and isinstance(price, Decimal)):
             raise TypeError("price and amount must be Decimal objects.")
 
+        cdef :
+             kwargs = {"expiration_ts": self._current_timestamp + expiration_seconds,
+                       "position_action": position_action, "con_id": con_id, "argument": argument}
+
         cdef:
-            kwargs = {"expiration_ts": self._current_timestamp + expiration_seconds,
-                      "position_action": position_action}
             ConnectorBase market = market_trading_pair_tuple.market
 
         if market not in self._sb_markets:
@@ -546,18 +551,21 @@ cdef class StrategyBase(TimeIterator):
                                   order_type=OrderType.MARKET,
                                   price=s_decimal_nan,
                                   expiration_seconds=NaN,
-                                  position_action=PositionAction.OPEN):
+                                  position_action=PositionAction.OPEN,
+                                  con_id=None, argument=None):
         return self.c_sell_with_specific_market(market_trading_pair_tuple, amount,
                                                 order_type,
                                                 price,
                                                 expiration_seconds,
-                                                position_action)
+                                                position_action,
+                                                con_id, argument)
 
     cdef str c_sell_with_specific_market(self, object market_trading_pair_tuple, object amount,
                                          object order_type=OrderType.MARKET,
                                          object price=s_decimal_nan,
                                          double expiration_seconds=NaN,
-                                         position_action=PositionAction.OPEN):
+                                         position_action=PositionAction.OPEN,
+                                         object con_id=None, object argument=None):
         if self._sb_delegate_lock:
             raise RuntimeError("Delegates are not allowed to execute orders directly.")
 
@@ -566,7 +574,9 @@ cdef class StrategyBase(TimeIterator):
 
         cdef:
             kwargs = {"expiration_ts": self._current_timestamp + expiration_seconds,
-                      "position_action": position_action}
+                      "position_action": position_action, "con_id": con_id, "argument": argument}
+
+        cdef:
             ConnectorBase market = market_trading_pair_tuple.market
 
         if market not in self._sb_markets:

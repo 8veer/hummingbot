@@ -214,19 +214,19 @@ class StartCommand(GatewayChainApiManager):
         try:
             script_class = next((member for member_name, member in inspect.getmembers(script_module)
                                  if inspect.isclass(member) and
-                                 issubclass(member, ScriptStrategyBase) and
+                                 issubclass(member, StrategyV2Base) and
                                  member not in [ScriptStrategyBase, DirectionalStrategyBase, StrategyV2Base]))
         except StopIteration:
-            raise InvalidScriptModule(f"The module {script_name} does not contain any subclass of ScriptStrategyBase")
+            raise InvalidScriptModule(f"The module {script_name} does not contain any subclass of StrategyV2Base")
         if self.strategy_name != self.strategy_file_name:
             try:
                 config_class = next((member for member_name, member in inspect.getmembers(script_module)
                                     if inspect.isclass(member) and
-                                    issubclass(member, BaseClientModel) and member not in [BaseClientModel, StrategyV2ConfigBase]))
+                                    issubclass(member, StrategyV2ConfigBase) and member not in [BaseClientModel, StrategyV2ConfigBase]))
                 config = config_class(**self.load_script_yaml_config(config_file_path=self.strategy_file_name))
                 script_class.init_markets(config)
             except StopIteration:
-                raise InvalidScriptModule(f"The module {script_name} does not contain any subclass of BaseModel")
+                raise InvalidScriptModule(f"The module {script_name} does not contain any subclass of StrategyV2ConfigBase")
 
         return script_class, config
 

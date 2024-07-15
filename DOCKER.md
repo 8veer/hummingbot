@@ -23,9 +23,10 @@ brew install docker-compose
 
 If you want to be guided through the installation, install [Docker Desktop](https://www.docker.com/products/docker-desktop/) includes Docker Compose along with Docker Engine and Docker CLI which are Compose prerequisites:
 
-- [Linux](https://docs.docker.com/desktop/install/linux-install/)
-- [Mac](https://docs.docker.com/desktop/install/mac-install/)
-- [Windows](https://docs.docker.com/desktop/install/windows-install/)
+* [Linux](https://docs.docker.com/desktop/install/linux-install/)
+* [Mac](https://docs.docker.com/desktop/install/mac-install/)
+* [Windows](https://docs.docker.com/desktop/install/windows-install/)
+
 
 Verify that Docker Compose is installed correctly by checking the version:
 
@@ -40,7 +41,6 @@ Compiled images of `hummingbot` are available on our official DockerHub: https:/
 ## Building a Docker Image
 
 You can also build and run a Docker-based Hummingbot image using the `docker-compose.yml` file in the root folder:
-
 ```yml
 version: "3.9"
 services:
@@ -57,8 +57,8 @@ services:
       - ./data:/home/hummingbot/data
       - ./scripts:/home/hummingbot/scripts
     environment:
-      - CONFIG_PASSWORD=a
-      - CONFIG_FILE_NAME=directional_strategy_rsi.py
+      # - CONFIG_PASSWORD=a
+      # - CONFIG_FILE_NAME=directional_strategy_rsi.py
     logging:
       driver: "json-file"
       options:
@@ -78,16 +78,13 @@ services:
 ```
 
 Build and launch the image by running:
-
 ```
 docker compose up -d
 ```
 
 Uncomment the following lines in the YML file before running the command above if you would like to:
-
-- Bypass the password screen by entering the previously set password
-- Auto-starting a script
-
+* Bypass the password screen by entering the previously set password
+* Auto-starting a script
 ```
   # environment:
     # - CONFIG_PASSWORD=a
@@ -99,31 +96,26 @@ Uncomment the following lines in the YML file before running the command above i
 Use the commands below or use the Docker Desktop application to manage your containers:
 
 ### Create the Compose project
-
 ```
 docker compose up -d
 ```
 
 ### Stop the Compose project
-
 ```
 docker compose down
 ```
 
 ### Update the Compose project for the latest images
-
 ```
 docker compose up --force-recreate --build -d
 ```
 
 ### Give all users read/write permissions to local files
-
 ```
 sudo chmod -R a+rw <files/folders>
 ```
 
 ### Attach to the container
-
 ```
 docker attach <container-name>
 ```
@@ -132,26 +124,23 @@ docker attach <container-name>
 
 Press keys <kbd>Ctrl</kbd> + <kbd>P</kbd> then <kbd>Ctrl</kbd> + <kbd>Q</kbd>
 
-### Update the container to the latest image
 
+### Update the container to the latest image
 ```
 docker compose up --force-recreate --build -d
 ```
 
 ### List all containers
-
 ```
 docker ps -a
 ```
 
 ### Stop a container
-
 ```
 docker stop <container-name>
 ```
 
 ### Remove a container
-
 ```
 docker rm <container-name>
 ```

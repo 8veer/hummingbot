@@ -48,7 +48,9 @@ SCRIPT_STRATEGIES_MODULE = "scripts"
 SCRIPT_STRATEGIES_PATH = root_path() / SCRIPT_STRATEGIES_MODULE
 CONTROLLERS_MODULE = "controllers"
 CONTROLLERS_PATH = root_path() / CONTROLLERS_MODULE
+CONTROLLERS_MODULE_2 = "hummingbot.strategy_v2.controllers"
 DEFAULT_GATEWAY_CERTS_PATH = root_path() / "certs"
+SCRIPT_STRATEGIES_PCR_PATH = SCRIPT_STRATEGIES_PATH / "pcr"
 
 GATEWAY_SSL_CONF_FILE = root_path() / "gateway" / "conf" / "ssl.yml"
 

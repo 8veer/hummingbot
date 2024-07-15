@@ -80,7 +80,7 @@ cdef class InFlightOrderBase:
 
     @property
     def quote_asset(self) -> str:
-        return self.trading_pair.split("-")[1]
+        return self.trading_pair.split("-")[0]
 
     @property
     def creation_timestamp(self) -> float:

@@ -90,7 +90,7 @@ class LiquidityMiningTest(unittest.TestCase):
         self.order_refresh_time = 1
 
         trading_pairs = list(map(lambda quote_asset: "ETH-" + quote_asset, ["USDT", "BTC"]))
-        market, market_infos = self.create_market(trading_pairs, self.mid_price, {"USDT": 5000, "ETH": 500, "BTC": 100})
+        market, market_infos = self.create_market(trading_pairs, self.mid_price, {"USDT": 8080, "ETH": 500, "BTC": 100})
         self.market = market
         self.market_infos = market_infos
 

@@ -32,7 +32,7 @@ class DirectionalStrategyBaseTest(unittest.TestCase):
         self.trading_pair: str = "HBOT-USDT"
         self.base_asset, self.quote_asset = self.trading_pair.split("-")
         self.base_balance: int = 500
-        self.quote_balance: int = 5000
+        self.quote_balance: int = 8080
         self.initial_mid_price: int = 100
         self.clock_tick_size = 1
         self.clock: Clock = Clock(ClockMode.BACKTEST, self.clock_tick_size, self.start_timestamp, self.end_timestamp)

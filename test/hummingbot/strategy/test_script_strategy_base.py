@@ -39,7 +39,7 @@ class ScriptStrategyBaseTest(unittest.TestCase):
         self.trading_pair: str = "HBOT-USDT"
         self.base_asset, self.quote_asset = self.trading_pair.split("-")
         self.base_balance: int = 500
-        self.quote_balance: int = 5000
+        self.quote_balance: int = 8080
         self.initial_mid_price: int = 100
         self.clock_tick_size = 1
         self.clock: Clock = Clock(ClockMode.BACKTEST, self.clock_tick_size, self.start_timestamp, self.end_timestamp)
@@ -118,7 +118,7 @@ class ScriptStrategyBaseTest(unittest.TestCase):
   Balances:
                Exchange Asset  Total Balance  Available Balance
     mock_paper_exchange  HBOT            500              498.9
-    mock_paper_exchange  USDT           5000               4910
+    mock_paper_exchange  USDT           8080               4910
 
   Orders:
                Exchange    Market Side  Price  Amount      Age

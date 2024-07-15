@@ -37,6 +37,7 @@ class WSConnection:
             headers=ws_headers,
             autoping=False,
             heartbeat=ping_timeout,
+            verify_ssl=False
         )
         self._message_timeout = message_timeout
         self._connected = True

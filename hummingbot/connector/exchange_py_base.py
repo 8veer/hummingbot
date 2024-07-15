@@ -42,7 +42,7 @@ class ExchangePyBase(ExchangeBase, ABC):
 
     SHORT_POLL_INTERVAL = 5.0
     LONG_POLL_INTERVAL = 120.0
-    TRADING_RULES_INTERVAL = 30 * MINUTE
+    TRADING_RULES_INTERVAL = TWELVE_HOURS
     TRADING_FEES_INTERVAL = TWELVE_HOURS
     TICK_INTERVAL_LIMIT = 60.0
 
@@ -169,10 +169,10 @@ class ExchangePyBase(ExchangeBase, ABC):
     def status_dict(self) -> Dict[str, bool]:
         return {
             "symbols_mapping_initialized": self.trading_pair_symbol_map_ready(),
-            "order_books_initialized": self.order_book_tracker.ready,
+            # "order_books_initialized": self.order_book_tracker.ready,
             "account_balance": not self.is_trading_required or len(self._account_balances) > 0,
             "trading_rule_initialized": len(self._trading_rules) > 0 if self.is_trading_required else True,
-            "user_stream_initialized": self._is_user_stream_initialized(),
+            # "user_stream_initialized": self._is_user_stream_initialized(),
         }
 
     @property
@@ -657,6 +657,9 @@ class ExchangePyBase(ExchangeBase, ABC):
     #
     web_utils = None
 
+    async def _keep_session_alive_request(self):
+        pass
+
     async def start_network(self):
         """
         Start all required tasks to update the status of the connector. Those tasks include:
@@ -666,7 +669,8 @@ class ExchangePyBase(ExchangeBase, ABC):
         - The background task to process the events received through the user stream tracker (websocket connection)
         """
         self._stop_network()
-        self.order_book_tracker.start()
+        # self.order_book_tracker.start()
+        # safe_ensure_future(self._keep_session_alive_request())
         if self.is_trading_required:
             self._trading_rules_polling_task = safe_ensure_future(self._trading_rules_polling_loop())
             self._trading_fees_polling_task = safe_ensure_future(self._trading_fees_polling_loop())

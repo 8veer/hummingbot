@@ -127,7 +127,8 @@ class HistoryCommand:
                                      perf: PerformanceMetrics,
                                      precision: int):
         lines = []
-        base, quote = trading_pair.split("-")
+        base = trading_pair
+        quote = ""
         lines.extend(
             [f"\n{market} / {trading_pair}"]
         )

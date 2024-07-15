@@ -1031,7 +1031,7 @@ class InjectiveV2PerpetualDerivativeTests(AbstractPerpetualDerivativeTests.Perpe
         order_book = OrderBook()
         self.exchange.order_book_tracker._order_books[self.trading_pair] = order_book
         order_book.apply_snapshot(
-            bids=[OrderBookRow(price=5000, amount=20, update_id=1)],
+            bids=[OrderBookRow(price=8080, amount=20, update_id=1)],
             asks=[],
             update_id=1,
         )
@@ -1194,7 +1194,7 @@ class InjectiveV2PerpetualDerivativeTests(AbstractPerpetualDerivativeTests.Perpe
         self.exchange.order_book_tracker._order_books[self.trading_pair] = order_book
         order_book.apply_snapshot(
             bids=[],
-            asks=[OrderBookRow(price=5000, amount=20, update_id=1)],
+            asks=[OrderBookRow(price=8080, amount=20, update_id=1)],
             update_id=1,
         )
 
@@ -1238,7 +1238,7 @@ class InjectiveV2PerpetualDerivativeTests(AbstractPerpetualDerivativeTests.Perpe
         order_book = OrderBook()
         self.exchange.order_book_tracker._order_books[self.trading_pair] = order_book
         order_book.apply_snapshot(
-            bids=[OrderBookRow(price=5000, amount=20, update_id=1)],
+            bids=[OrderBookRow(price=8080, amount=20, update_id=1)],
             asks=[],
             update_id=1,
         )

@@ -59,7 +59,7 @@ class GatewayCancelDataCollector:
     @staticmethod
     async def load_configs():
         await read_system_configs_from_yml()
-        gateway_http_client.base_url = "https://localhost:5000"
+        gateway_http_client.base_url = "https://local:8080"
 
     @asynccontextmanager
     async def run_clock(self) -> Generator[Clock, None, None]:

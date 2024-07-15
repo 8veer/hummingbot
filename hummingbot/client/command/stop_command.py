@@ -33,6 +33,7 @@ class StopCommand:
             self._pmm_script_iterator.stop(self.clock)
 
         if isinstance(self.strategy, ScriptStrategyBase):
+            self.logger().info("Strategy Stopped")
             self.strategy.on_stop()
 
         if self._trading_required and not skip_order_cancellation:
@@ -40,6 +41,7 @@ class StopCommand:
             # prevent race condition where the strategy tries to create more
             # orders during cancellation.
             if self.clock:
+                self.logger().info("Clock Iterator Removed")
                 self.clock.remove_iterator(self.strategy)
             success = await self._cancel_outstanding_orders()
             # Give some time for cancellation events to trigger
@@ -49,9 +51,11 @@ class StopCommand:
                 self.markets = {}
 
         if self.strategy_task is not None and not self.strategy_task.cancelled():
+            self.logger().info("Strategy Task Cancelled")
             self.strategy_task.cancel()
 
         if RateOracle.get_instance().started:
+            self.logger().info("Rate Oracle Stopped")
             RateOracle.get_instance().stop()
 
         if self.markets_recorder is not None:

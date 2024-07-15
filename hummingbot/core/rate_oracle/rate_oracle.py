@@ -2,13 +2,13 @@ import asyncio
 import logging
 from decimal import Decimal
 from typing import Dict, Optional
-
 import hummingbot.client.settings  # noqa
 from hummingbot.connector.utils import combine_to_hb_trading_pair
 from hummingbot.core.network_base import NetworkBase
 from hummingbot.core.network_iterator import NetworkStatus
 from hummingbot.core.rate_oracle.sources.ascend_ex_rate_source import AscendExRateSource
 from hummingbot.core.rate_oracle.sources.binance_rate_source import BinanceRateSource
+from hummingbot.core.rate_oracle.sources.ibkr_rate_source import IbkrRateSource
 from hummingbot.core.rate_oracle.sources.binance_us_rate_source import BinanceUSRateSource
 from hummingbot.core.rate_oracle.sources.coin_cap_rate_source import CoinCapRateSource
 from hummingbot.core.rate_oracle.sources.coin_gecko_rate_source import CoinGeckoRateSource
@@ -23,6 +23,7 @@ from hummingbot.logger import HummingbotLogger
 
 RATE_ORACLE_SOURCES = {
     "binance": BinanceRateSource,
+    "ibkr": IbkrRateSource,
     "binance_us": BinanceUSRateSource,
     "coin_gecko": CoinGeckoRateSource,
     "coin_cap": CoinCapRateSource,
@@ -57,11 +58,11 @@ class RateOracle(NetworkBase):
 
     def __init__(self, source: Optional[RateSourceBase] = None, quote_token: Optional[str] = None):
         super().__init__()
-        self._source: RateSourceBase = source if source is not None else BinanceRateSource()
+        self._source: RateSourceBase = source if source is not None else IbkrRateSource()
         self._prices: Dict[str, Decimal] = {}
         self._fetch_price_task: Optional[asyncio.Task] = None
         self._ready_event = asyncio.Event()
-        self._quote_token = quote_token if quote_token is not None else "USD"
+        self._quote_token = quote_token if quote_token is not None else "INR"
 
     def __str__(self):
         return f"{self._source.name} rate oracle"
@@ -146,7 +147,7 @@ class RateOracle(NetworkBase):
         """
         Finds a conversion rate of a given token to a global token
 
-        :param base_token: The token symbol that we want to price, e.g. BTC
+        :param base_token: The token symbol that we want to price, e.g. RELIANCE
         :return A conversion rate
         """
         prices = await self._source.get_prices(quote_token=self._quote_token)

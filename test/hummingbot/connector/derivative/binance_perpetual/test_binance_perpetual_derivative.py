@@ -1320,7 +1320,7 @@ class BinancePerpetualDerivativeUnitTest(unittest.TestCase):
                    "orderId": "8886774",
                    "price": "10000",
                    "qty": "0.5",
-                   "quoteQty": "5000",
+                   "quoteQty": "8080",
                    "realizedPnl": "0",
                    "side": "SELL",
                    "positionSide": "SHORT",
@@ -1352,7 +1352,7 @@ class BinancePerpetualDerivativeUnitTest(unittest.TestCase):
         self.assertEqual(PositionAction.OPEN, in_flight_orders["OID1"].position)
 
         self.assertEqual(0.5, in_flight_orders["OID1"].executed_amount_base)
-        self.assertEqual(5000, in_flight_orders["OID1"].executed_amount_quote)
+        self.assertEqual(8080, in_flight_orders["OID1"].executed_amount_quote)
         self.assertEqual(1, in_flight_orders["OID1"].last_update_timestamp)
 
         self.assertTrue("698759" in in_flight_orders["OID1"].order_fills.keys())
@@ -1429,7 +1429,7 @@ class BinancePerpetualDerivativeUnitTest(unittest.TestCase):
 
         order = {"avgPrice": "0.00000",
                  "clientOrderId": "OID1",
-                 "cumQuote": "5000",
+                 "cumQuote": "8080",
                  "executedQty": "0.5",
                  "orderId": 8886774,
                  "origQty": "1",
@@ -1504,7 +1504,7 @@ class BinancePerpetualDerivativeUnitTest(unittest.TestCase):
 
         order = {"avgPrice": "0.00000",
                  "clientOrderId": "OID1",
-                 "cumQuote": "5000",
+                 "cumQuote": "8080",
                  "executedQty": "0.5",
                  "orderId": 8886774,
                  "origQty": "1",

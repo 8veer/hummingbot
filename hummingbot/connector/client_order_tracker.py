@@ -32,8 +32,8 @@ cot_logger = None
 class ClientOrderTracker:
 
     MAX_CACHE_SIZE = 1000
-    CACHED_ORDER_TTL = 30.0  # seconds
-    TRADE_FILLS_WAIT_TIMEOUT = 5  # seconds
+    CACHED_ORDER_TTL = 180.0  # seconds
+    TRADE_FILLS_WAIT_TIMEOUT = 180.0  # seconds
 
     @classmethod
     def logger(cls) -> HummingbotLogger:

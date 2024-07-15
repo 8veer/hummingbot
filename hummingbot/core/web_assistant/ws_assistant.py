@@ -40,7 +40,8 @@ class WSAssistant:
         message_timeout: Optional[float] = None,
         ws_headers: Optional[Dict] = {},
     ):
-        await self._connection.connect(ws_url=ws_url, ws_headers=ws_headers, ping_timeout=ping_timeout, message_timeout=message_timeout)
+        await self._connection.connect(ws_url=ws_url, ws_headers=ws_headers, ping_timeout=ping_timeout,
+                                       message_timeout=message_timeout)
 
     async def disconnect(self):
         await self._connection.disconnect()

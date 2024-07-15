@@ -405,8 +405,8 @@ class TestSpotPerpetualArbitrage(unittest.TestCase):
         # asyncio.get_event_loop().run_until_complete(asyncio.sleep(0.01))
         self.assertTrue(self._is_logged("INFO", "Arbitrage position opening opportunity found."))
         self.assertTrue(self._is_logged("INFO", "Profitability (9.94%) is now above min_opening_arbitrage_pct."))
-        self.assertTrue(self._is_logged("INFO", "Placing SELL order for 1 HBOT at mock_paper_exchange at 99.5000 price"))
-        self.assertTrue(self._is_logged("INFO", "Placing BUY order for 1 HBOT at mock_perp_connector at 90.5000 price to "
+        self.assertTrue(self._is_logged("INFO", "Placing SELL order for 1 HBOT at mock_paper_exchange at 99.8080 price"))
+        self.assertTrue(self._is_logged("INFO", "Placing BUY order for 1 HBOT at mock_perp_connector at 90.8080 price to "
                                                 "OPEN position."))
         placed_orders = self.strategy.tracked_market_orders
         self.assertEqual(2, len(placed_orders))

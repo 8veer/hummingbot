@@ -117,6 +117,7 @@ class BalanceCommand:
                                          ex_avai_balances: Dict[str, Decimal]):
         conn_setting = AllConnectorSettings.get_connector_settings()[exchange]
         global_token_symbol = self.client_config_map.global_token.global_token_symbol
+        global_token_name = self.client_config_map.global_token.global_token_name
         total_col_name = f"Total ({global_token_symbol})"
         allocated_total = Decimal("0")
         rows = []
@@ -135,8 +136,9 @@ class BalanceCommand:
                     continue
                 allocated = f"{(bal - avai) / bal:.0%}"
 
-            rate = await RateOracle.get_instance().get_rate(base_token=token)
-            rate = Decimal("0") if rate is None else rate
+            # rate = await RateOracle.get_instance().get_rate(base_token=token)
+            # rate = Decimal("0") if rate is None else rate
+            rate = Decimal("1") if token == global_token_name else Decimal("0")
             global_value = rate * bal
             allocated_total += rate * (bal - avai)
             rows.append({"Asset": token.upper(),

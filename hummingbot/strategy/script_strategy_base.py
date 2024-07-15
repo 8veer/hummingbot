@@ -1,4 +1,5 @@
 import logging
+import time
 from decimal import Decimal
 from typing import Any, Dict, List, Optional, Set
 
@@ -13,6 +14,7 @@ from hummingbot.core.event.events import OrderType, PositionAction
 from hummingbot.logger import HummingbotLogger
 from hummingbot.strategy.market_trading_pair_tuple import MarketTradingPairTuple
 from hummingbot.strategy.strategy_py_base import StrategyPyBase
+from hummingbot.core.utils.async_utils import safe_ensure_future
 
 lsb_logger = None
 s_decimal_nan = Decimal("NaN")
@@ -72,9 +74,9 @@ class ScriptStrategyBase(StrategyPyBase):
                     self.logger().warning(f"{con.name} is not ready. Please wait...")
                 return
         else:
-            self.on_tick()
+            safe_ensure_future(self.on_tick())
 
-    def on_tick(self):
+    async def on_tick(self):
         """
         An event which is called on every tick, a sub class implements this to define what operation the strategy needs
         to operate on a regular tick basis.
@@ -90,7 +92,8 @@ class ScriptStrategyBase(StrategyPyBase):
             amount: Decimal,
             order_type: OrderType,
             price=s_decimal_nan,
-            position_action=PositionAction.OPEN) -> str:
+            position_action=PositionAction.OPEN,
+            **kwargs) -> str:
         """
         A wrapper function to buy_with_specific_market.
 
@@ -105,7 +108,42 @@ class ScriptStrategyBase(StrategyPyBase):
         """
         market_pair = self._market_trading_pair_tuple(connector_name, trading_pair)
         self.logger().info(f"Creating {trading_pair} buy order: price: {price} amount: {amount}.")
-        return self.buy_with_specific_market(market_pair, amount, order_type, price, position_action=position_action)
+        con_id = kwargs.get("con_id")
+        argument = kwargs.get("argument")
+        return self.buy_with_specific_market(market_pair, amount, order_type, price,
+                                             position_action=position_action, con_id=con_id, argument=argument)
+
+    def buy_with_specific_market(self, market_trading_pair_tuple, amount,
+                                 order_type=OrderType.MARKET,
+                                 price=s_decimal_nan,
+                                 expiration_seconds=np.NaN,
+                                 position_action=PositionAction.OPEN,
+                                 con_id=None, argument=None):
+        # if self._sb_delegate_lock:
+        #     raise RuntimeError("Delegates are not allowed to execute orders directly.")
+
+        if not (isinstance(amount, Decimal) and isinstance(price, Decimal)):
+            raise TypeError("price and amount must be Decimal objects.")
+
+        kwargs = {"expiration_ts": time.time() + expiration_seconds,
+                  "position_action": position_action, "con_id": con_id, "argument": argument}
+
+        market = market_trading_pair_tuple.market
+
+        # if market not in self._sb_markets:
+        #     raise ValueError(f"Market object for buy order is not in the whitelisted markets set.")
+
+        order_id = market.buy(market_trading_pair_tuple.trading_pair,
+                              amount=amount,order_type=order_type,
+                              price=price, kwargs=kwargs)
+
+        # Start order tracking
+        if order_type.is_limit_type():
+            self.start_tracking_limit_order(market_trading_pair_tuple, order_id, False, price, amount)
+        elif order_type == OrderType.MARKET:
+            self.start_tracking_market_order(market_trading_pair_tuple, order_id, False, amount)
+
+        return order_id
 
     def sell(self,
              connector_name: str,
@@ -113,7 +151,8 @@ class ScriptStrategyBase(StrategyPyBase):
              amount: Decimal,
              order_type: OrderType,
              price=s_decimal_nan,
-             position_action=PositionAction.OPEN) -> str:
+             position_action=PositionAction.OPEN,
+             **kwargs) -> str:
         """
         A wrapper function to sell_with_specific_market.
 
@@ -128,7 +167,41 @@ class ScriptStrategyBase(StrategyPyBase):
         """
         market_pair = self._market_trading_pair_tuple(connector_name, trading_pair)
         self.logger().info(f"Creating {trading_pair} sell order: price: {price} amount: {amount}.")
-        return self.sell_with_specific_market(market_pair, amount, order_type, price, position_action=position_action)
+        con_id = kwargs.get("con_id")
+        argument = kwargs.get("argument")
+        return self.sell_with_specific_market(market_pair, amount, order_type, price,
+                                              position_action=position_action, con_id=con_id, argument=argument)
+
+    def sell_with_specific_market(self, market_trading_pair_tuple, amount,
+                                  order_type=OrderType.MARKET,
+                                  price=s_decimal_nan,
+                                  expiration_seconds=np.NaN,
+                                  position_action=PositionAction.OPEN,
+                                  con_id=None, argument=None):
+        # if self._sb_delegate_lock:
+        #     raise RuntimeError("Delegates are not allowed to execute orders directly.")
+
+        if not (isinstance(amount, Decimal) and isinstance(price, Decimal)):
+            raise TypeError("price and amount must be Decimal objects.")
+
+        kwargs = {"expiration_ts": time.time() + expiration_seconds,
+                  "position_action": position_action, "con_id": con_id, "argument": argument}
+
+        market = market_trading_pair_tuple.market
+
+        # if market not in self._sb_markets:
+        #     raise ValueError(f"Market object for sell order is not in the whitelisted markets set.")
+
+        order_id = market.sell(market_trading_pair_tuple.trading_pair, amount,
+                               order_type=order_type, price=price, kwargs=kwargs)
+
+        # Start order tracking
+        if order_type.is_limit_type():
+            self.start_tracking_limit_order(market_trading_pair_tuple, order_id, False, price, amount)
+        elif order_type == OrderType.MARKET:
+            self.start_tracking_market_order(market_trading_pair_tuple, order_id, False, amount)
+
+        return order_id
 
     def cancel(self,
                connector_name: str,

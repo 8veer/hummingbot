@@ -151,10 +151,12 @@ class UserBalances:
     async def balances(self, exchange, client_config_map: ClientConfigMap, *symbols) -> Dict[str, Decimal]:
         if await self.update_exchange_balance(exchange, client_config_map) is None:
             results = {}
+            global_token = client_config_map.global_token.global_token_name
+            print("Global Token:", global_token)
             for token, bal in self.all_balances(exchange).items():
-                matches = [s for s in symbols if s.lower() == token.lower()]
+                matches = global_token if global_token.lower() == token.lower() else None
                 if matches:
-                    results[matches[0]] = bal
+                    results[matches] = bal
             return results
 
     @staticmethod
@@ -162,13 +164,12 @@ class UserBalances:
         return "Connector deprecated."
 
     @staticmethod
-    async def base_amount_ratio(exchange, trading_pair, balances) -> Optional[Decimal]:
+    async def base_amount_ratio(exchange, trading_pair, balances, client_config_map: ClientConfigMap) -> Optional[Decimal]:
         try:
-            base, quote = trading_pair.split("-")
-            base_amount = balances.get(base, 0)
-            quote_amount = balances.get(quote, 0)
+            global_token = client_config_map.global_token.global_token_name
+            quote_amount = balances.get(global_token, 0)
             price = await get_last_price(exchange, trading_pair)
-            total_value = base_amount + (quote_amount / price)
-            return None if total_value <= 0 else base_amount / total_value
+            total_value = quote_amount / price
+            return None if total_value <= 0 else total_value
         except Exception:
             return None

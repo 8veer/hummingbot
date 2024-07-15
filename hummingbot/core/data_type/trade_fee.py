@@ -203,27 +203,27 @@ class TradeFeeBase(ABC):
             exchange: Optional["ExchangeBase"] = None,
             rate_source: Optional["RateOracle"] = None      # noqa: F821
     ) -> Decimal:
-        base, quote = split_hb_trading_pair(trading_pair)
+        # base, quote = split_hb_trading_pair(trading_pair)
         fee_amount: Decimal = S_DECIMAL_0
-        if self.percent != S_DECIMAL_0:
-            amount_from_percentage: Decimal = (price * order_amount) * self.percent
-            if self._are_tokens_interchangeable(quote, token):
-                fee_amount += amount_from_percentage
-            else:
-                conversion_rate: Decimal = self._get_exchange_rate(trading_pair, exchange, rate_source)
-                fee_amount += amount_from_percentage / conversion_rate
-        for flat_fee in self.flat_fees:
-            if self._are_tokens_interchangeable(flat_fee.token, token):
-                # No need to convert the value
-                fee_amount += flat_fee.amount
-            elif (self._are_tokens_interchangeable(flat_fee.token, base)
-                  and (self._are_tokens_interchangeable(quote, token))):
-                # In this case instead of looking for the rate we use directly the price in the parameters
-                fee_amount += flat_fee.amount * price
-            else:
-                conversion_pair: str = combine_to_hb_trading_pair(base=flat_fee.token, quote=token)
-                conversion_rate: Decimal = self._get_exchange_rate(conversion_pair, exchange, rate_source)
-                fee_amount += (flat_fee.amount * conversion_rate)
+        # if self.percent != S_DECIMAL_0:
+        #     amount_from_percentage: Decimal = (price * order_amount) * self.percent
+        #     if self._are_tokens_interchangeable(quote, token):
+        #         fee_amount += amount_from_percentage
+        #     else:
+        #         conversion_rate: Decimal = self._get_exchange_rate(trading_pair, exchange, rate_source)
+        #         fee_amount += amount_from_percentage / conversion_rate
+        # for flat_fee in self.flat_fees:
+        #     if self._are_tokens_interchangeable(flat_fee.token, token):
+        #         # No need to convert the value
+        #         fee_amount += flat_fee.amount
+        #     elif (self._are_tokens_interchangeable(flat_fee.token, base)
+        #           and (self._are_tokens_interchangeable(quote, token))):
+        #         # In this case instead of looking for the rate we use directly the price in the parameters
+        #         fee_amount += flat_fee.amount * price
+        #     else:
+        #         conversion_pair: str = combine_to_hb_trading_pair(base=flat_fee.token, quote=token)
+        #         conversion_rate: Decimal = self._get_exchange_rate(conversion_pair, exchange, rate_source)
+        #         fee_amount += (flat_fee.amount * conversion_rate)
         return fee_amount
 
     def _are_tokens_interchangeable(self, first_token: str, second_token: str):
@@ -256,19 +256,19 @@ class AddedToCostTradeFee(TradeFeeBase):
         Returns the impact of the fee on the cost requirements for the candidate order.
         """
         ret = None
-        if self.percent != S_DECIMAL_0:
-            fee_token = self.percent_token or order_candidate.order_collateral.token
-            if order_candidate.order_collateral is None or fee_token != order_candidate.order_collateral.token:
-                token, size = order_candidate.get_size_token_and_order_size()
-                if fee_token == token:
-                    exchange_rate = Decimal("1")
-                else:
-                    exchange_pair = combine_to_hb_trading_pair(token, fee_token)  # buy order token w/ pf token
-                    exchange_rate = exchange.get_price(exchange_pair, is_buy=True)
-                fee_amount = size * exchange_rate * self.percent
-            else:  # self.percent_token == order_candidate.order_collateral.token
-                fee_amount = order_candidate.order_collateral.amount * self.percent
-            ret = TokenAmount(fee_token, fee_amount)
+        # if self.percent != S_DECIMAL_0:
+        #     fee_token = self.percent_token or order_candidate.order_collateral.token
+        #     if order_candidate.order_collateral is None or fee_token != order_candidate.order_collateral.token:
+        #         token, size = order_candidate.get_size_token_and_order_size()
+        #         if fee_token == token:
+        #             exchange_rate = Decimal("1")
+        #         else:
+        #             exchange_pair = combine_to_hb_trading_pair(token, fee_token)  # buy order token w/ pf token
+        #             exchange_rate = exchange.get_price(exchange_pair, is_buy=True)
+        #         fee_amount = size * exchange_rate * self.percent
+        #     else:  # self.percent_token == order_candidate.order_collateral.token
+        #         fee_amount = order_candidate.order_collateral.amount * self.percent
+        #     ret = TokenAmount(fee_token, fee_amount)
         return ret
 
     def get_fee_impact_on_order_returns(
@@ -306,7 +306,8 @@ class DeductedFromReturnsTradeFee(TradeFeeBase):
 
         Returns the impact of the fee on the expected returns from the candidate order.
         """
-        impact = order_candidate.potential_returns.amount * self.percent
+        # impact = order_candidate.potential_returns.amount * self.percent
+        impact = None
         return impact
 
 

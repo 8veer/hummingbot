@@ -63,7 +63,7 @@ class GatewayEVMAMMDataCollector:
     @staticmethod
     async def load_configs():
         await read_system_configs_from_yml()
-        gateway_http_client.base_url = "https://localhost:5000"
+        gateway_http_client.base_url = "https://localhost:8080"
 
     async def wait_til_ready(self):
         print("Waiting til ready...\t\t", end="", flush=True)

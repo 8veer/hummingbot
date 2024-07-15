@@ -31,7 +31,7 @@ class GatewayHttpClientUnitTest(unittest.TestCase):
         cls._patch_stack.enter_context(
             patch("hummingbot.core.gateway.gateway_http_client.GatewayHttpClient._http_client", return_value=ClientSession())
         )
-        GatewayHttpClient.get_instance().base_url = "https://localhost:5000"
+        GatewayHttpClient.get_instance().base_url = "https://localhost:8080"
 
     @classmethod
     def tearDownClass(cls) -> None:

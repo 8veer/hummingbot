@@ -1967,7 +1967,7 @@ class CoinbaseAdvancedTradeExchangeTests(AbstractExchangeConnectorTests.Exchange
                 Decimal("0.5"),
                 TradeType.BUY,
                 "INVALID_TYPE",
-                Decimal("5000")
+                Decimal("8080")
             ))
 
     @patch.object(ExchangePyBase, "_api_post", new_callable=AsyncMock)

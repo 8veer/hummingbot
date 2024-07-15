@@ -69,7 +69,7 @@ class PMMUnitTest(unittest.TestCase):
                                             price_step_size=1,
                                             volume_step_size=10)
         self.market.set_balance("HBOT", 500)
-        self.market.set_balance("ETH", 5000)
+        self.market.set_balance("ETH", 8080)
         self.market.set_quantization_param(
             QuantizationParams(
                 self.trading_pair, 6, 6, 6, 6
@@ -373,7 +373,7 @@ class PMMUnitTest(unittest.TestCase):
             strategy.cancel_order(order.client_order_id)
 
         self.market.set_balance("HBOT", 0)
-        self.market.set_balance("ETH", Decimal("5000"))
+        self.market.set_balance("ETH", Decimal("8080"))
         self.clock.backtest_til(self.start_timestamp + 7)
         self.assertEqual(3, len(strategy.active_buys))
         self.assertEqual(0, len(strategy.active_sells))
@@ -1221,7 +1221,7 @@ class PureMarketMakingMinimumSpreadUnitTest(unittest.TestCase):
                                             mid_price=self.mid_price, min_price=1,
                                             max_price=200, price_step_size=1, volume_step_size=10)
         self.market.set_balance("COINALPHA", 500)
-        self.market.set_balance("WETH", 5000)
+        self.market.set_balance("WETH", 8080)
         self.market.set_balance("QETH", 500)
         self.market.set_quantization_param(
             QuantizationParams(

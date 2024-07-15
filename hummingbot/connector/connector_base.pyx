@@ -146,7 +146,7 @@ cdef class ConnectorBase(NetworkIterator):
         order_filled_events = [o for o in order_filled_events if o.timestamp > starting_timestamp]
         balances = {}
         for event in order_filled_events:
-            base, quote = event.trading_pair.split("-")[0], event.trading_pair.split("-")[1]
+            base, quote = event.trading_pair.split("-")[0], event.trading_pair.split("-")[0]
             if event.trade_type is TradeType.BUY:
                 quote_value = Decimal("-1") * event.price * event.amount
                 base_value = event.amount

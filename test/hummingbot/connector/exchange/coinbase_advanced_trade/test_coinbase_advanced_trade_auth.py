@@ -114,7 +114,7 @@ class CoinbaseAdvancedTradeAuthTests(IsolatedAsyncioWrapperTestCase):
     #        time_difference_ms = abs(server_time_ms - local_time_ms)
     #
     #        # Allow for a tolerance of up to 5 seconds
-    #        tolerance_ms = 5000
+    #        tolerance_ms = 8080
     #
     #        self.assertTrue(time_difference_ms < tolerance_ms,
     #                        f"Live Test: Time difference ({time_difference_ms} seconds) is too large.\n"

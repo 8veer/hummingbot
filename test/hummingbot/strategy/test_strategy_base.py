@@ -75,7 +75,7 @@ class StrategyBaseUnitTests(unittest.TestCase):
                                             mid_price=self.mid_price, min_price=1,
                                             max_price=200, price_step_size=1, volume_step_size=10)
         self.market.set_balance("COINALPHA", 500)
-        self.market.set_balance("WETH", 5000)
+        self.market.set_balance("WETH", 8080)
         self.market.set_balance("QETH", 500)
         self.market.set_quantization_param(
             QuantizationParams(

@@ -357,7 +357,7 @@ class ConfigCommand:
                 balances = await UserBalances.instance().balances(exchange, config_map, base, quote)
             if balances is None:
                 return
-            base_ratio = await UserBalances.base_amount_ratio(exchange, market, balances)
+            base_ratio = await UserBalances.base_amount_ratio(exchange, market, balances, config_map)
             if base_ratio is None:
                 return
             base_ratio = round(base_ratio, 3)
@@ -390,7 +390,7 @@ class ConfigCommand:
         else:
             exchange = config_map['exchange'].value
             market = config_map["market"].value
-            base, quote = market.split("-")
+            base, quote = split_hb_trading_pair(market)
             if UserBalances.instance().is_gateway_market(exchange):
                 balances = await GatewayCommand.balance(self, exchange, config_map, base, quote)
             else:
@@ -402,7 +402,8 @@ class ConfigCommand:
                 return
             base_ratio = round(base_ratio, 3)
             quote_ratio = 1 - base_ratio
-            base, quote = config_map["market"].value.split("-")
+            base, quote = config_map["market"].value
+            quote = ""
 
             cvar = ConfigVar(key="temp_config",
                              prompt=f"On {exchange}, you have {balances.get(base, 0):.4f} {base} and "
@@ -443,7 +444,7 @@ class ConfigCommand:
         else:
             exchange = config_map["exchange"].value
             market = config_map["market"].value
-            base_asset, quote_asset = market.split("-")
+            base_asset, quote_asset = split_hb_trading_pair(market)
 
             if exchange.endswith("paper_trade"):
                 balances = self.client_config_map.paper_trade.paper_trade_account_balance
